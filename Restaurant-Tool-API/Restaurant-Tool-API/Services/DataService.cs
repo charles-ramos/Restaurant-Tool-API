@@ -1,6 +1,5 @@
-﻿namespace Restaurant_Tool_API.Services
+﻿namespace Restaurant_Tool_API.Services;
+
+public class DataService : IDataService
 {
-    public class DataService : IDataService
-    {
-    }
 }
