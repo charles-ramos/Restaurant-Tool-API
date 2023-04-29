@@ -12,5 +12,5 @@ public class Orders
 
     public Tables Table { get; set; }
 
-    public Menu[] Menu { get; set; }
+    public List<Menu> Menu { get; set; }
 }
