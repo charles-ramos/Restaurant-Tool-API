@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Restaurant_Tool_API.Services;
 
 namespace Restaurant_Tool_API.Controllers;
 
@@ -8,4 +9,9 @@ namespace Restaurant_Tool_API.Controllers;
 [Produces("application/json")]
 public class MenuController : ControllerBase
 {
+    private readonly IDataService _dataService;
+    public MenuController(IDataService dataService)
+    {
+        _dataService = dataService;
+    }
 }

@@ -4,15 +4,15 @@ namespace Restaurant_Tool_API.Database;
 
 public class DataContext : DbContext
 {
-    protected readonly IConfiguration Configuration;
+    protected readonly IConfiguration _configuration;
     public DataContext (DbContextOptions<DataContext> options, IConfiguration configuration) : base(options)
     {
-        Configuration = configuration;
+        _configuration = configuration;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+        optionsBuilder.UseSqlite(_configuration.GetConnectionString("DefaultConnection"));
     }
 
     public virtual DbSet<Tables> TableItems { get; set; }
