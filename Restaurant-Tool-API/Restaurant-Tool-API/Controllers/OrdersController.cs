@@ -52,12 +52,14 @@ public class OrdersController : ControllerBase
     /// Add a new order.
     /// </summary>
     /// <response code="200">Returns the order.</response>
-    /// <response code="400">If the reservation is null.</response>
+    /// <response code="400">If the order or reservation is null.</response>
     [HttpPut]
     [ProducesResponseType(typeof(Models.Orders), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult AddOrder([FromBody] Models.Orders order)
     {
+        if (order == null) return this.BadRequest("order is null");
+
         var result = _dataService.AddOrderAsync(order);
 
         if (result == null) return this.BadRequest("Could not add order");

@@ -41,6 +41,8 @@ public class ReservationsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult AddReservation([FromBody] Models.Reservations reservation)
     {
+        if (reservation == null) return this.BadRequest("reservation is null");
+
         var result = _dataService.AddReservationAsync(reservation);
 
         if (result == null) return this.BadRequest("Could not add reservation");

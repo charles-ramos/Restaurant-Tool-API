@@ -18,12 +18,14 @@ public class BillsController : ControllerBase
     /// Create a bill by reservation Id and payment method.
     /// </summary>
     /// <response code="200">Returns the bill for this reservation Id.</response>
-    /// <response code="400">If the reservation is null.</response>
+    /// <response code="400">If the bill is null.</response>
     [HttpPut]
     [ProducesResponseType(typeof(Models.Bills), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult CreateBill(int reservationId, string paymentMethod)
     {
+        if (paymentMethod == null) return this.BadRequest("no payment method");
+
         var result = _dataService.GetBillByReservationIdAsync(reservationId, paymentMethod);
 
         if (result == null) return this.BadRequest("Could not create bill");
