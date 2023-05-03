@@ -11,13 +11,18 @@ public class Bills
     public int Id { get; set; }
 
     [Required]
-    public int TotalPrice { get; set; }
+    public double TotalPrice { get; set; }
 
     [Required]
     public DateTime Date { get; set; }
 
+    [Required]
     public int PaymentMethod { get; set; }
 
     [StringLength(200)]
-    public string OrderIDs { get; set; }
+    [Required]
+    public string OrderIds { get; set; }
+
+    [Required]
+    public int ReservationId { get; set; }
 }

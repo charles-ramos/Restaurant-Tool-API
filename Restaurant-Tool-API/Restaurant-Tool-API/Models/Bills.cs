@@ -14,6 +14,8 @@ public class Bills
 
     public string PaymentMethod { get; set; }
 
-    public Orders[] Orders { get; set; }
+    public List<Orders> Orders { get; set; }
+
+    public int ReservationId { get; set; }
 }
 
