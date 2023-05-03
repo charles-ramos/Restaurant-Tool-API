@@ -1,14 +1,334 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.EntityFrameworkCore;
 using Restaurant_Tool_API.Database;
+using Restaurant_Tool_API.Models.Enums;
 
 namespace Restaurant_Tool_API.Services;
 
-public class DataService : IDataService
+public class DataService : IDataService 
 {
     private readonly DataContext _context;
 
     public DataService (DataContext context)
     {
         _context = context;
+    }
+
+    // public methods
+
+    // TABLES
+    public async Task<IEnumerable<Models.Tables>> GetTablesAsync()
+    {
+        var tables = await _context.TableItems.ToListAsync();
+
+        var result = ConvertTableList(tables);
+
+        return result;
+    }
+
+
+    // RESERVATION
+    public async Task<IEnumerable<Models.Reservations>> GetReservationsAsync()
+    {
+        var reservations = await _context.ReservationItems.ToListAsync();
+
+        var result = ConvertReservationList(reservations);
+
+        return result;
+    }
+
+    public async Task<Models.Reservations> AddReservationAsync(Models.Reservations reservation)
+    {
+        var item = new Database.Reservations
+        {
+            Id = reservation.Id,
+            Count = reservation.Count,
+            Date = reservation.Date,
+            Time = reservation.Time,
+            TableId = reservation.Table.Id
+        };
+        await _context.AddAsync(item);
+        await _context.SaveChangesAsync();
+
+        var result = ConvertReservation(item);
+
+        return result;
+    }
+
+    public async Task<bool> DeleteReservationByIdAsync(int id)
+    {
+        var result = await _context.ReservationItems.SingleOrDefaultAsync(x => x.Id == id);
+
+        if (result != null)
+        {
+            _context.Remove(result);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        return false;
+    }
+
+
+    // ORDER
+    public async Task<IEnumerable<Models.Orders>> GetOrdersAsync()
+    {
+        var orders = await _context.OrderItems.ToListAsync();
+
+        var result = ConvertOrderList(orders);
+
+        return result;
+    }
+
+    public async Task<IEnumerable<Models.Orders>> GetOrdersByTableIdAsync(int id)
+    {
+        var orders = await _context.OrderItems.Where(item => item.TableId == id).ToListAsync();
+
+        var result = ConvertOrderList(orders);
+
+        return result; 
+    }
+
+    public async Task<Models.Orders> AddOrderAsync(Models.Orders order)
+    {
+        var item = new Database.Orders
+        {
+            Id = order.Id,
+            MenuIds = string.Join(",", order.MenuList.Select(item => item.Id)),
+            ReservationId = order.Reservation.Id,
+            TableId = order.Table.Id
+        };
+
+        await _context.AddAsync(item);
+        await _context.SaveChangesAsync();
+
+        var result = ConvertOrder(item);
+
+        return result;
+    }
+
+
+    // MENU 
+    public async Task<IEnumerable<Models.Menu>> GetMenuListAsync()
+    {
+        var menuList = await _context.MenuItems.ToListAsync();
+
+        var result = ConvertMenuList(menuList);
+
+        return result;
+    }
+
+
+    // BILL
+    public async Task<Models.Bills> GetBillByReservationIdAsync(int reservationId, string paymentMethod)
+    {
+        var orders = await _context.OrderItems.Where(item => item.ReservationId == reservationId).ToListAsync();
+
+        if (!orders.Any()) return null;
+
+        var result = await CreateBillAsync(orders, reservationId, paymentMethod);
+
+        return result;
+    }
+    
+
+    // private methods
+
+    // TABLES
+    private List<Models.Tables> ConvertTableList(List<Database.Tables> tables)
+    {
+        var result = new List<Models.Tables>();
+
+        foreach (var table in tables)
+        {
+            var resultItem = ConvertTable(table);
+            result.Add(resultItem);
+        }
+
+        return result;
+    }
+
+    private Models.Tables ConvertTable(Database.Tables table)
+    {
+        var result = new Models.Tables
+        {
+            Id = table.Id,
+            Seats = table.Seats
+        };
+
+        return result;
+    }
+
+    private async Task<Models.Tables> GetTableByIdAsync(int id)
+    {
+        var table = await _context.TableItems.SingleOrDefaultAsync(item => item.Id == id);
+
+        if (table == null) return null;
+
+        var result = ConvertTable(table);
+
+        return result;
+    }
+
+
+    // RESERVATION
+    private List<Models.Reservations> ConvertReservationList(List<Database.Reservations> reservations)
+    {
+        var result = new List<Models.Reservations>();
+
+        foreach (var reservation in reservations)
+        {
+            var reservationItem = ConvertReservation(reservation);
+            result.Add(reservationItem);
+        }
+
+        return result;
+    }
+
+    private Models.Reservations ConvertReservation(Database.Reservations reservation)
+    {
+        var result = new Models.Reservations
+        {
+            Id = reservation.Id,
+            Count = reservation.Count,
+            Date = reservation.Date,
+            Time = reservation.Time,
+            Table = GetTableByIdAsync(reservation.TableId).Result
+        };
+
+        return result;
+    }
+
+    private async Task<Models.Reservations> GetReservationByIdAsync(int id)
+    {
+        var reservation = await _context.ReservationItems.SingleOrDefaultAsync(item => item.Id == id);
+
+        if (reservation == null) return null;
+
+        var result = ConvertReservation(reservation);
+
+        return result;
+    }
+
+    
+    // ORDER
+    private List<Models.Orders> ConvertOrderList(List<Database.Orders> orders)
+    {
+        var result = new List<Models.Orders>();
+
+        foreach (var order in orders)
+        {
+            var orderItem = ConvertOrder(order);
+            result.Add(orderItem);
+        }
+
+        return result;
+    }
+
+    private Models.Orders ConvertOrder(Database.Orders order)
+    {
+        var result = new Models.Orders
+        {
+            Id = order.Id,
+            Table = GetTableByIdAsync(order.TableId).Result,
+            Reservation = GetReservationByIdAsync(order.ReservationId).Result,
+            MenuList = GetMenuItemsByIdsAsync(order.MenuIds).Result
+        };
+
+        return result;
+    }
+
+    private async Task<List<Models.Orders>> GetOrdersByIdsAsync(string id)
+    {
+        var orderIds = id.Split(',').ToList();
+
+        var orders = await _context.OrderItems.Where(item => orderIds.Contains(item.Id.ToString())).ToListAsync();
+
+        if (orders == null) return null;
+
+        var result = ConvertOrderList(orders);
+
+        return result;
+    }
+
+
+    // MENU
+    private async Task<List<Models.Menu>> GetMenuItemsByIdsAsync(string id)
+    {
+        var menuIds = id.Split(',').ToList();
+
+        var menuItems = await _context.MenuItems.Where(item => menuIds.Contains(item.Id.ToString())).ToListAsync();
+
+        if (menuItems == null) return null;
+
+        var result = ConvertMenuList(menuItems);
+
+        return result;
+    }
+
+    private List<Models.Menu> ConvertMenuList(List<Database.Menu> menuItems)
+    {
+        var result = new List<Models.Menu>();
+
+        foreach (var item in menuItems)
+        {
+            var menuItem = ConvertMenuItem(item);  
+            result.Add(menuItem);
+        }
+
+        return result;
+    }
+
+    private Models.Menu ConvertMenuItem(Database.Menu menu)
+    {
+        var result = new Models.Menu
+        {
+            Id = menu.Id,
+            Title = menu.Title,
+            Description = menu.Description,
+            Price = menu.Price.ToString() + " EUR",
+            Category = Enum.GetName(typeof(MenuCategory), menu.Category)
+        };
+
+        return result;
+    }
+
+
+    // BILL
+    private async Task<Models.Bills> CreateBillAsync(List<Database.Orders> orders, int reservationId, string paymentMethod)
+    {
+        var menuList = await GetMenuItemsByIdsAsync(string.Join(",", orders.Select(item => item.MenuIds)));
+        var totalPrice = menuList.Sum(item => double.Parse(item.Price));
+
+        var bill = new Database.Bills
+        {
+            Date = DateTime.Now,
+            PaymentMethod = (int)Enum.Parse(typeof(PaymentMethod), paymentMethod),
+            ReservationId = reservationId,
+            TotalPrice = totalPrice,
+            OrderIds = string.Join(",", orders.Select(item => item.Id))
+        };
+
+        await _context.AddAsync(bill);
+        await _context.SaveChangesAsync();
+
+        var result = await ConvertBillAsync(bill);
+        
+        return result;
+    }
+
+    private async Task<Models.Bills> ConvertBillAsync(Database.Bills bill)
+    {
+        var orderList = await GetOrdersByIdsAsync(bill.OrderIds);
+        var result = new Models.Bills
+        {
+            Id = bill.Id,
+            Date = bill.Date,
+            PaymentMethod = Enum.GetName(typeof(PaymentMethod), bill.PaymentMethod),
+            TotalPrice = bill.TotalPrice.ToString() + " EUR",
+            ReservationId = bill.ReservationId,
+            Orders = orderList
+        };
+
+        return result;
     }
 }
