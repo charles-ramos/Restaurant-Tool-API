@@ -8,11 +8,13 @@ public class Menu
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
 
-    public string Title { get; set; }
+    public string Name { get; set; }
 
-    public string Description { get; set; }
+    public string Ingredients { get; set; }
 
-    public string Price { get; set; }
+    public string Note { get; set; }
+
+    public float Price { get; set; }
 
     public string Category { get; set; }
 }

@@ -20,7 +20,7 @@ public class BillsController : ControllerBase
     /// <response code="200">Returns the bill for this reservation Id.</response>
     /// <response code="400">If the bill is null.</response>
     [HttpPut]
-    [ProducesResponseType(typeof(Models.Bills), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Models.Bill), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult CreateBill(int reservationId, string paymentMethod)
     {

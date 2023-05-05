@@ -5,21 +5,19 @@ namespace Restaurant_Tool_API.Services;
 
 public interface IDataService
 {
-    Task<IEnumerable<Tables>> GetTablesAsync();
+    Task<IEnumerable<Reservation>> GetReservationsAsync();
 
-    Task<IEnumerable<Reservations>> GetReservationsAsync();
-
-    Task<Reservations> AddReservationAsync(Reservations reservation);
+    Task<Reservation> AddReservationAsync(Reservation reservation);
 
     Task<bool> DeleteReservationByIdAsync(int id);
 
-    Task<IEnumerable<Orders>> GetOrdersAsync();
+    Task<IEnumerable<Order>> GetOrdersAsync();
 
-    Task<IEnumerable<Orders>> GetOrdersByTableIdAsync(int id);
+    Task<IEnumerable<Order>> GetOrdersByTableIdAsync(int id);
 
-    Task<Orders> AddOrderAsync(Orders order);
+    Task<Order> AddOrderAsync(Order order);
 
     Task<IEnumerable<Menu>> GetMenuListAsync();
 
-    Task<Bills> GetBillByReservationIdAsync(int reservationId, string paymentMethod);
+    Task<Bill> GetBillByReservationIdAsync(int reservationId, string paymentMethod);
 }

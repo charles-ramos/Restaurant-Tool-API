@@ -20,7 +20,7 @@ public class OrdersController : ControllerBase
     /// <response code="200">Returns orders.</response>
     /// <response code="404">If orders are null.</response>
     [HttpGet]
-    [ProducesResponseType(typeof(List<Models.Orders>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<Models.Order>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetOrders()
     {
@@ -37,7 +37,7 @@ public class OrdersController : ControllerBase
     /// <response code="200">Returns the orders with this table Id.</response>
     /// <response code="404">If the ID is null.</response>
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(List<Models.Orders>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<Models.Order>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetOrdersByTableId(int id)
     {
@@ -54,9 +54,9 @@ public class OrdersController : ControllerBase
     /// <response code="200">Returns the order.</response>
     /// <response code="400">If the order or reservation is null.</response>
     [HttpPut]
-    [ProducesResponseType(typeof(Models.Orders), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Models.Order), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult AddOrder([FromBody] Models.Orders order)
+    public IActionResult AddOrder([FromBody] Models.Order order)
     {
         if (order == null) return this.BadRequest("order is null");
 

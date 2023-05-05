@@ -15,9 +15,9 @@ public class DataContext : DbContext
         optionsBuilder.UseSqlite(_configuration.GetConnectionString("DefaultConnection"));
     }
 
-    public virtual DbSet<Tables> TableItems { get; set; }
-    public virtual DbSet<Reservations> ReservationItems { get; set; }
-    public virtual DbSet<Orders> OrderItems { get; set; }
+    public virtual DbSet<Table> TableItems { get; set; }
+    public virtual DbSet<Reservation> ReservationItems { get; set; }
+    public virtual DbSet<Order> OrderItems { get; set; }
     public virtual DbSet<Menu> MenuItems { get; set; }
-    public virtual DbSet<Bills> BillItems { get; set; }
+    public virtual DbSet<Bill> BillItems { get; set; }
 }

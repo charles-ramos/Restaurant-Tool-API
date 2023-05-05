@@ -3,13 +3,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Restaurant_Tool_API.Database;
 
-[Table("Tables")]
-public class Tables
+[Table("Tables")]   
+public class Table
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Required]
-    public int Id { get; set; }
+    public int Id { get; set; }    
 
     [Required]
-    public int Seats { get; set; }
+    public int NumberOfSeats { get; set; }
 }
