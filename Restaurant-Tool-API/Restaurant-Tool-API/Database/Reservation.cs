@@ -3,26 +3,26 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Restaurant_Tool_API.Database;
 
-[Table("Bills")]
-public class Bills
+[Table("Reservations")]
+public class Reservation
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Required]
     public int Id { get; set; }
 
     [Required]
-    public double TotalPrice { get; set; }
+    public DateOnly Date { get; set; }
 
     [Required]
-    public DateTime Date { get; set; }
+    public TimeOnly Time { get; set; }
 
     [Required]
-    public int PaymentMethod { get; set; }
-
-    [StringLength(200)]
-    [Required]
-    public string OrderIds { get; set; }
+    [StringLength(50)]
+    public string Name { get; set; }
 
     [Required]
-    public int ReservationId { get; set; }
+    public int TableId { get; set; }
+
+    [Required]
+    public int NumberOfPersons { get; set; }
 }

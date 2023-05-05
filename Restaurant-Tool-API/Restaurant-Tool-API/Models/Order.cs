@@ -3,16 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Restaurant_Tool_API.Models;
 
-public class Reservations
+public class Order
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
 
-    public DateOnly Date { get; set; }
+    public int ReservationId { get; set; }
 
-    public TimeOnly Time { get; set; }
+    public int TableId { get; set; }
 
-    public int Count { get; set; }
-
-    public Tables Table { get; set; }
+    public List<Menu> MenuList { get; set; }
 }

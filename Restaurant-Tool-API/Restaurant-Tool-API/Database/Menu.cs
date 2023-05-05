@@ -12,13 +12,16 @@ public class Menu
 
     [Required]
     [StringLength(50)]
-    public string Title { get; set; }
+    public string Name { get; set; }
 
-    [StringLength(100)]
-    public string Description { get; set; }
+    [StringLength(200)]
+    public string Ingredients { get; set; }
+
+    [StringLength(1000)]
+    public string Note { get; set; }
 
     [Required]
-    public double Price { get; set; }
+    public float Price { get; set; }
 
     [Required]
     public int Category { get; set; }

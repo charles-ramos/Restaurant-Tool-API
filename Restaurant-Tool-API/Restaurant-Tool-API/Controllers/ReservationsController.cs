@@ -20,7 +20,7 @@ public class ReservationsController : ControllerBase
     /// <response code="200">Returns reservations.</response>
     /// <response code="404">If the reservations are null.</response>
     [HttpGet]
-    [ProducesResponseType(typeof(List<Models.Reservations>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<Models.Reservation>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetReservations()
     {
@@ -37,9 +37,9 @@ public class ReservationsController : ControllerBase
     /// <response code="200">Returns the reservation.</response>
     /// <response code="400">If the reservation is null.</response>
     [HttpPut]
-    [ProducesResponseType(typeof(Models.Reservations), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Models.Reservation), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult AddReservation([FromBody] Models.Reservations reservation)
+    public IActionResult AddReservation([FromBody] Models.Reservation reservation)
     {
         if (reservation == null) return this.BadRequest("reservation is null");
 

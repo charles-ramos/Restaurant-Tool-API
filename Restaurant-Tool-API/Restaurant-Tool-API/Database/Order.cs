@@ -3,22 +3,20 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Restaurant_Tool_API.Database;
 
-[Table("Reservations")]
-public class Reservations
+[Table("Orders")]
+public class Order
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Required]
     public int Id { get; set; }
 
     [Required]
-    public DateOnly Date { get; set; }
-
-    [Required]
-    public TimeOnly Time { get; set; }
+    public int ReservationId { get; set; }
 
     [Required]
     public int TableId { get; set; }
 
     [Required]
-    public int Count { get; set; }
+    [StringLength(2000)]
+    public string MenuIds { get; set; }
 }
