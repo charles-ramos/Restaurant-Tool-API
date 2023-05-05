@@ -17,6 +17,9 @@ public class Reservation
     public TimeOnly Time { get; set; }
 
     [Required]
+    public string Name { get; set; }
+
+    [Required]
     public int TableId { get; set; }
 
     [Required]
