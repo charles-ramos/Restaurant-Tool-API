@@ -14,10 +14,10 @@ public class Menu
     [StringLength(50)]
     public string Name { get; set; }
 
-    [StringLength(100)]
+    [StringLength(200)]
     public string Ingredients { get; set; }
 
-    [StringLength(100)]
+    [StringLength(1000)]
     public string Note { get; set; }
 
     [Required]

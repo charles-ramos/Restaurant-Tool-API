@@ -17,6 +17,7 @@ public class Reservation
     public TimeOnly Time { get; set; }
 
     [Required]
+    [StringLength(50)]
     public string Name { get; set; }
 
     [Required]
