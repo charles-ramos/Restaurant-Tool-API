@@ -13,4 +13,6 @@ public class Order
     public int TableId { get; set; }
 
     public List<Menu> MenuList { get; set; }
+
+    public string Note { get; set; }
 }

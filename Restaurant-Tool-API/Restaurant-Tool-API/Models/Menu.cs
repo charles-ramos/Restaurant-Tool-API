@@ -12,8 +12,6 @@ public class Menu
 
     public string Ingredients { get; set; }
 
-    public string Note { get; set; }
-
     public float Price { get; set; }
 
     public string Category { get; set; }

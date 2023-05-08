@@ -19,4 +19,7 @@ public class Order
     [Required]
     [StringLength(2000)]
     public string MenuIds { get; set; }
+
+    [StringLength(1000)]
+    public string Note { get; set; }
 }

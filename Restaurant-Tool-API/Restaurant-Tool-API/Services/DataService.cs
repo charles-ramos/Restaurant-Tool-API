@@ -189,7 +189,8 @@ public class DataService : IDataService
             Id = order.Id,
             MenuIds = string.Join(",", order.MenuList.Select(item => item.Id)), // concat all menu item IDs with comma
             ReservationId = order.ReservationId,
-            TableId = order.TableId
+            TableId = order.TableId,
+            Note = order.Note
         };
 
         return result; 
@@ -245,7 +246,6 @@ public class DataService : IDataService
             Ingredients = menu.Ingredients,
             Price = menu.Price,
             Category = Enum.GetName(typeof(MenuCategory), menu.Category),     // get name of enum with this integer
-            Note = menu.Note
         };
 
         return result;
