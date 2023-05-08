@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authentication;
 using Restaurant_Tool_API.Database;
+using Restaurant_Tool_API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<DataContext>();
+builder.Services.AddScoped<IDataService, DataService>();
 
 var app = builder.Build();
 
