@@ -15,7 +15,7 @@ public class Menu
     public string Name { get; set; }
 
     [StringLength(200)]
-    public string Ingredients { get; set; }
+    public string? Ingredients { get; set; }
 
     [Required]
     public float Price { get; set; }

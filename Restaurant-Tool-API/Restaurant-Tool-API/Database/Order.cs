@@ -21,5 +21,5 @@ public class Order
     public string MenuIds { get; set; }
 
     [StringLength(1000)]
-    public string Note { get; set; }
+    public string? Note { get; set; }
 }
