@@ -14,5 +14,5 @@ public class Order
 
     public List<Menu> MenuList { get; set; }
 
-    public string Note { get; set; }
+    public string? Note { get; set; }
 }

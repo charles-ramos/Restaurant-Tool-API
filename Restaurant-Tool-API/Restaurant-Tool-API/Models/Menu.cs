@@ -10,7 +10,7 @@ public class Menu
 
     public string Name { get; set; }
 
-    public string Ingredients { get; set; }
+    public string? Ingredients { get; set; }
 
     public float Price { get; set; }
 
