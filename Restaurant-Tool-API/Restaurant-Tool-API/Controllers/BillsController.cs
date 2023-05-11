@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Restaurant_Tool_API.Services;
+using System.ComponentModel.DataAnnotations;
 
 namespace Restaurant_Tool_API.Controllers;
 
@@ -22,10 +23,8 @@ public class BillsController : ControllerBase
     [HttpPut]
     [ProducesResponseType(typeof(Models.Bill), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult CreateBill(int reservationId, string paymentMethod)
+    public IActionResult CreateBill([Required] int reservationId, [Required] string paymentMethod)
     {
-        if (paymentMethod == null) return this.BadRequest("no payment method");
-
         var result = _dataService.GetBillByReservationIdAsync(reservationId, paymentMethod);
 
         if (result == null) return this.BadRequest("Could not create bill");

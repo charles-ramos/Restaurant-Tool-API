@@ -18,7 +18,7 @@ public class MenuController : ControllerBase
     /// Get menu.
     /// </summary>
     /// <response code="200">Returns menu.</response>
-    /// <response code="404">If the menu is null</response>
+    /// <response code="404">If the menu is null.</response>
     [HttpGet]
     [ProducesResponseType(typeof(List<Models.Menu>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

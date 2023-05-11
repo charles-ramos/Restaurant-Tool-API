@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Restaurant_Tool_API.Services;
+using System.ComponentModel.DataAnnotations;
 
 namespace Restaurant_Tool_API.Controllers;
 
@@ -35,14 +36,12 @@ public class ReservationsController : ControllerBase
     /// Add a new reservation.
     /// </summary>
     /// <response code="200">Returns the reservation.</response>
-    /// <response code="400">If the reservation is null.</response>
+    /// <response code="400">If the reservation could not be added.</response>
     [HttpPut]
     [ProducesResponseType(typeof(Models.Reservation), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult AddReservation([FromBody] Models.Reservation reservation)
+    public IActionResult AddReservation([FromBody, Required] Models.Reservation reservation)
     {
-        if (reservation == null) return this.BadRequest("reservation is null");
-
         var result = _dataService.AddReservationAsync(reservation);
 
         if (result == null) return this.BadRequest("Could not add reservation");
@@ -58,7 +57,7 @@ public class ReservationsController : ControllerBase
     [HttpPut("delete{id}")]
     [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult DeleteReservation(int id)
+    public IActionResult DeleteReservation([Required] int id)
     {
         var result = _dataService.DeleteReservationByIdAsync(id);
 
