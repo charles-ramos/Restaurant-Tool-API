@@ -5,7 +5,6 @@ namespace Restaurant_Tool_API.Models;
 
 public class Menu
 {
-    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
 
     public string Name { get; set; }

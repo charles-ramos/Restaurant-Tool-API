@@ -11,7 +11,7 @@ public class Bill
     public int Id { get; set; }
 
     [Required]
-    public float TotalPrice { get; set; }
+    public float Price { get; set; }
 
     [Required]
     public DateTime Date { get; set; }

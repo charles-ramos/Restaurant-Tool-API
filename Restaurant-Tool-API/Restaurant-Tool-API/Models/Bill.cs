@@ -5,10 +5,9 @@ namespace Restaurant_Tool_API.Models;
 
 public class Bill
 {
-    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
 
-    public float TotalPrice { get; set; }
+    public float Price { get; set; }
 
     public DateTime Date { get; set; }
 

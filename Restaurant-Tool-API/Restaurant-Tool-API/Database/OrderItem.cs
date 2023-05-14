@@ -3,13 +3,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Restaurant_Tool_API.Database;
 
-[Table("Orders")]
-public class Order
+[Table("OrderItems")]
+public class OrderItem
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    [Required]
     public int Id { get; set; }
 
     [Required]
-    public int TableId { get; set; }
+    public int MenuId { get; set; }
+
+    public string? Note { get; set; }
+
+    [Required]
+    public int OrderId { get; set; }
 }
