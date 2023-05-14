@@ -9,7 +9,7 @@ public class DataService : IDataService
 {
     private readonly DataContext _context;
 
-    public DataService (DataContext context)
+    public DataService (DataContext context)    // Comments
     {
         _context = context;
     }
@@ -19,7 +19,7 @@ public class DataService : IDataService
     // RESERVATION
     public async Task<IEnumerable<Models.Reservation>> GetReservationsAsync()
     {
-        var reservations = await _context.ReservationItems.ToListAsync();   // get all reservations in database
+        var reservations = await _context.Reservations.ToListAsync();   // get all reservations in database
 
         var result = ConvertReservationList(reservations);  // convert reservations from DB model to API/view model to return
 
@@ -40,7 +40,7 @@ public class DataService : IDataService
 
     public async Task<bool> DeleteReservationByIdAsync(int id)
     {
-        var result = await _context.ReservationItems.SingleOrDefaultAsync(x => x.Id == id); // get reservation with this Id in database
+        var result = await _context.Reservations.SingleOrDefaultAsync(x => x.Id == id); // get reservation with this Id in database
 
         if (result != null)     // if a reservation with this Id exists, delete the reservation 
         {
@@ -56,7 +56,7 @@ public class DataService : IDataService
     // ORDER
     public async Task<IEnumerable<Models.Order>> GetOrdersAsync()
     {
-        var orders = await _context.OrderItems.ToListAsync();   // get all orders in database
+        var orders = await _context.Orders.ToListAsync();   // get all orders in database
 
         var result = ConvertOrderList(orders);  // convert orders from DB model to API/view model to return 
 
@@ -65,7 +65,7 @@ public class DataService : IDataService
 
     public async Task<IEnumerable<Models.Order>> GetOrdersByTableIdAsync(int id)
     {
-        var orders = await _context.OrderItems.Where(item => item.TableId == id).ToListAsync(); // get all orders with this table Id from database
+        var orders = await _context.Orders.Where(item => item.TableId == id).ToListAsync(); // get all orders with this table Id from database
 
         var result = ConvertOrderList(orders);  // convert orders from DB model to API/view model to return
 
@@ -74,12 +74,14 @@ public class DataService : IDataService
 
     public async Task<Models.Order> AddOrderAsync(Models.Order order)
     {
-        var item = ConvertOrder(order);  // convert order from API/view model to DB model
+        var cOrder = ConvertOrder(order);  // convert order from API/view model to DB model
+        var cOrderItems = ConvertOrderItemList(order.OrderItems, cOrder.Id); // convert order items from API/view model to DB model 
 
-        await _context.AddAsync(item);  // add and save order in database
+        await _context.AddAsync(cOrder);  // add order to database
+        await _context.AddAsync(cOrderItems);  // add order items to database
         await _context.SaveChangesAsync();
 
-        var result = ConvertOrder(item);    // convert order from DB model to API/view model to return
+        var result = ConvertOrder(cOrder, cOrderItems);    // convert order from DB model to API/view model to return
 
         return result;
     }
@@ -88,7 +90,7 @@ public class DataService : IDataService
     // MENU 
     public async Task<IEnumerable<Models.Menu>> GetMenuListAsync()
     {
-        var menuList = await _context.MenuItems.ToListAsync();  // get all menu items in database
+        var menuList = await _context.Menu.ToListAsync();  // get all menu items in database
 
         var result = ConvertMenuList(menuList); // convert menu from DB model to API/view model to return
 
@@ -97,17 +99,13 @@ public class DataService : IDataService
 
 
     // BILL
-    public async Task<Models.Bill> GetBillByReservationIdAsync(int reservationId, string paymentMethod)
+    public async Task<Models.Bill> GetBillByOrdersAsync(List<Models.Order> orders, string paymentMethod)
     {
-        var orders = await _context.OrderItems.Where(item => item.ReservationId == reservationId).ToListAsync();    // get all orders with this reservation Id in database
-
-        if (!orders.Any()) return null; // no orders with this reservation Id
-
-        var result = await CreateBillAsync(orders, reservationId, paymentMethod);   // create bill 
+        var result = await CreateBillAsync(orders, paymentMethod);   // create bill 
 
         return result;
     }
-    
+
 
     // private methods
 
@@ -144,17 +142,17 @@ public class DataService : IDataService
     {
         var result = new Database.Reservation    
         {
-            Id = reservation.Id,
             NumberOfPersons = reservation.NumberOfPersons,
             Date = reservation.Date,
             Time = reservation.Time,
-            TableId = reservation.TableId
+            TableId = reservation.TableId,
+            Name = reservation.Name
         };
 
         return result;
     }
 
-    
+
     // ORDER
     private List<Models.Order> ConvertOrderList(List<Database.Order> orders)
     {
@@ -162,21 +160,21 @@ public class DataService : IDataService
 
         foreach (var order in orders)
         {
-            var orderItem = ConvertOrder(order);    // convert each item in list
-            result.Add(orderItem);     // add converted item to return list
+            var orderItems = GetOrderItemsByOrderIdAsync(order.Id).Result;
+            var cOrder = ConvertOrder(order, orderItems);    // convert each item in list
+            result.Add(cOrder);     // add converted item to return list
         }
 
         return result;
     }
 
-    private Models.Order ConvertOrder(Database.Order order)     // convert order from DB model to API/view model
+    private Models.Order ConvertOrder(Database.Order order, List<Database.OrderItem> orderItems)     // convert order from DB model to API/view model
     {
         var result = new Models.Order
         {
             Id = order.Id,
             TableId = order.TableId,
-            ReservationId = order.ReservationId,
-            MenuList = GetMenuItemsByIdsAsync(order.MenuIds).Result
+            OrderItems = ConvertOrderItemList(orderItems)
         };
 
         return result;
@@ -186,11 +184,7 @@ public class DataService : IDataService
     {
         var result = new Database.Order  
         {
-            Id = order.Id,
-            MenuIds = string.Join(",", order.MenuList.Select(item => item.Id)), // concat all menu item IDs with comma
-            ReservationId = order.ReservationId,
-            TableId = order.TableId,
-            Note = order.Note
+            TableId = order.TableId
         };
 
         return result; 
@@ -200,7 +194,7 @@ public class DataService : IDataService
     {
         var orderIds = id.Split(',').ToList();  // split string with IDs
 
-        var orders = await _context.OrderItems.Where(item => orderIds.Contains(item.Id.ToString())).ToListAsync();  // get all orders with one of this IDs in database
+        var orders = await _context.Orders.Where(item => orderIds.Contains(item.Id.ToString())).ToListAsync();  // get all orders with one of this IDs in database
 
         if (orders == null) return null;    // no orders with one of this IDs
 
@@ -210,20 +204,65 @@ public class DataService : IDataService
     }
 
 
-    // MENU
-    private async Task<List<Models.Menu>> GetMenuItemsByIdsAsync(string id)
+    // ORDER ITEMS
+    private async Task<List<Database.OrderItem>> GetOrderItemsByOrderIdAsync(int id)
     {
-        var menuIds = id.Split(',').ToList();   // split string with IDs 
-
-        var menuItems = await _context.MenuItems.Where(item => menuIds.Contains(item.Id.ToString())).ToListAsync(); // get all menu items with one of this IDs in database
-
-        if (menuItems == null) return null; // no menu items with one of this IDs
-
-        var result = ConvertMenuList(menuItems);    // convert menu from DB model to API/view model to return 
+        var result = await _context.OrderItems.Where(item => item.OrderId == id).ToListAsync();
 
         return result;
     }
 
+    private List<Database.OrderItem> ConvertOrderItemList(List<Models.OrderItem> orderItems, int orderId)
+    {
+        var result = new List<Database.OrderItem>();
+
+        foreach (var item in orderItems)
+        {
+            var orderItem = ConvertOrderItem(item, orderId);
+            result.Add(orderItem);
+        }
+
+        return result;
+    }
+
+    private List<Models.OrderItem> ConvertOrderItemList(List<Database.OrderItem> orderItems)
+    {
+        var result = new List<Models.OrderItem>();
+
+        foreach (var item in orderItems)
+        {
+            var orderItem = ConvertOrderItem(item);
+            result.Add(orderItem);
+        }
+
+        return result;
+    }
+
+    private Database.OrderItem ConvertOrderItem(Models.OrderItem orderItem, int orderId)
+    {
+        var result = new Database.OrderItem
+        {
+            Note = orderItem.Note,
+            OrderId = orderId,
+            MenuId = orderItem.Product.Id
+        };
+
+        return result;
+    }
+
+    private Models.OrderItem ConvertOrderItem(Database.OrderItem orderItem)
+    {
+        var result = new Models.OrderItem
+        {
+            Note = orderItem.Note,
+            Product = GetMenuItemByIdAsync(orderItem.MenuId).Result
+        };
+
+        return result;
+    }
+
+
+    // MENU 
     private List<Models.Menu> ConvertMenuList(List<Database.Menu> menuItems)
     {
         var result = new List<Models.Menu>();
@@ -251,19 +290,29 @@ public class DataService : IDataService
         return result;
     }
 
+    private async Task<Models.Menu> GetMenuItemByIdAsync(int id)
+    {
+        var item = _context.Menu.SingleOrDefault(item => item.Id == id);
+
+        var result = ConvertMenuItem(item);
+        
+        return result;
+    }
+
 
     // BILL
-    private async Task<Models.Bill> CreateBillAsync(List<Database.Order> orders, int reservationId, string paymentMethod)
+    private async Task<Models.Bill> CreateBillAsync(List<Models.Order> orders, string paymentMethod)
     {
-        var menuList = await GetMenuItemsByIdsAsync(string.Join(",", orders.Select(item => item.MenuIds))); // concat menu item IDs in orders with comma; get menu items by ID string 
-        var totalPrice = menuList.Sum(item => item.Price);    // sum price of all ordered menu items 
+        var totalPrice = orders.Select(order => order.OrderItems.Select(item => item.Product.Price).Sum()).Sum();
+        var reservation = await _context.Reservations.SingleOrDefaultAsync(item => item.TableId == orders.First().TableId);
+        var reservationId = reservation.Id;
 
         var bill = new Database.Bill   // create bill for database
         {
             Date = DateTime.Now,
             PaymentMethod = (int)Enum.Parse(typeof(PaymentMethod), paymentMethod),  // get enum integer value of this enum string name 
+            Price = totalPrice,
             ReservationId = reservationId,
-            TotalPrice = totalPrice,
             OrderIds = string.Join(",", orders.Select(item => item.Id))  // concat all order IDs with comma 
         };
 
@@ -277,15 +326,16 @@ public class DataService : IDataService
 
     private async Task<Models.Bill> ConvertBillAsync(Database.Bill bill)    // convert from DB model to API/view model
     {
-        var orderList = await GetOrdersByIdsAsync(bill.OrderIds);
+        var orders = await GetOrdersByIdsAsync(bill.OrderIds);
+
         var result = new Models.Bill
         {
             Id = bill.Id,
             Date = bill.Date,
             PaymentMethod = Enum.GetName(typeof(PaymentMethod), bill.PaymentMethod),    // get enum string name of this enum integer value 
-            TotalPrice = bill.TotalPrice,
+            Price = bill.Price,
             ReservationId = bill.ReservationId,
-            Orders = orderList
+            Orders = orders
         };
 
         return result;

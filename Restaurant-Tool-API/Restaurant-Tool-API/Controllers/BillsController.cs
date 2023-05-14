@@ -16,16 +16,16 @@ public class BillsController : ControllerBase
     }
 
     /// <summary>
-    /// Create a bill by reservation Id and payment method.
+    /// Create a bill with this orders and payment method.
     /// </summary>
-    /// <response code="200">Returns the bill for this reservation Id.</response>
+    /// <response code="200">Returns the bill.</response>
     /// <response code="400">If the bill is null.</response>
     [HttpPut]
     [ProducesResponseType(typeof(Models.Bill), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult CreateBill([Required] int reservationId, [Required] string paymentMethod)
+    public IActionResult CreateBill([FromBody, Required] List<Models.Order> orders, [Required] string paymentMethod)
     {
-        var result = _dataService.GetBillByReservationIdAsync(reservationId, paymentMethod);
+        var result = _dataService.GetBillByOrdersAsync(orders, paymentMethod);
 
         if (result == null) return this.BadRequest("Could not create bill");
 
