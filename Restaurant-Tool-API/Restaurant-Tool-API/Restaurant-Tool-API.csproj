@@ -5,8 +5,6 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Restaurant_Tool_API</RootNamespace>
-      <DockerRuntimeVersion>7.0</DockerRuntimeVersion>
-      <DockerArchitecture>x64</DockerArchitecture>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,9 +19,6 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-      <DockerfileContent Include="Dockerfile">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </DockerfileContent>
   </ItemGroup>
 
 </Project>
