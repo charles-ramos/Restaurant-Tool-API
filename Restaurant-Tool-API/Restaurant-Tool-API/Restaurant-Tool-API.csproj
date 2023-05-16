@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -7,6 +7,10 @@
     <RootNamespace>Restaurant_Tool_API</RootNamespace>
       <DockerRuntimeVersion>7.0</DockerRuntimeVersion>
       <DockerArchitecture>x64</DockerArchitecture>
+      <UserSecretsId>cb995375-a8f1-4051-9182-1b1337b6233b</UserSecretsId>
+      <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+      <DockerfileContext>.</DockerfileContext>
+      <DockerComposeProjectPath>docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,14 +20,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-      <DockerfileContent Include="Dockerfile">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </DockerfileContent>
   </ItemGroup>
 
 </Project>
