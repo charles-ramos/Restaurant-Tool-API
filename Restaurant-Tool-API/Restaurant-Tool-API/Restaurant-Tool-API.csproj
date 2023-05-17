@@ -26,6 +26,9 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+	  <DockerfileContent Include="Dockerfile">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </DockerfileContent>
   </ItemGroup>
 
 </Project>
