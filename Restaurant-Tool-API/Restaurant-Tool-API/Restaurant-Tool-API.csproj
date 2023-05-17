@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Restaurant_Tool_API</RootNamespace>
-      <DockerRuntimeVersion>7.0</DockerRuntimeVersion>
+      <DockerRuntimeVersion>6.0</DockerRuntimeVersion>
       <DockerArchitecture>x64</DockerArchitecture>
       <UserSecretsId>cb995375-a8f1-4051-9182-1b1337b6233b</UserSecretsId>
       <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
