@@ -14,10 +14,10 @@ COPY ["/Restaurant-Tool-API/Restaurant-Tool-API/Restaurant-Tool-API.csproj", "Re
 RUN dotnet restore "./Restaurant-Tool-API.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "Restaurant-Tool-API.csproj" -c Release -o /app/build --no-restore
+RUN dotnet build "Restaurant-Tool-API.csproj" -c Release -o /app/build 
 
 FROM build AS publish
-RUN dotnet publish "Restaurant-Tool-API.csproj" -c Release -o /app/publish /p:UseAppHost=false --no-restore
+RUN dotnet publish "Restaurant-Tool-API.csproj" -c Release -o /app/publish /p:UseAppHost=false 
 
 FROM base AS final
 WORKDIR /app
